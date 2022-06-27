@@ -1,6 +1,5 @@
 var actionInterval = 160;
 
-// generate several games
 var numGames = 1;
 var games  = new Array();
 
@@ -9,13 +8,8 @@ for (var i = 0; i < numGames; ++i) {
   games.push(new Runner(dinoName));
 }
 
-//var game = games[0];
 var player = new Player();
 var human = true;
-
-function sigmoid(t) {
-  return 1/(1+Math.pow(Math.E, -t));
-}
 
 function grey(input) {
     cnx.drawImage(myimage, 0 , 0);
@@ -37,16 +31,12 @@ function grey(input) {
 }
 
 // Deep Q Learning parameters
-var num_inputs = 5; // speed, obstacle distance, obstacle y-position
+var num_inputs = 42*42*1; // X,Y,grayscale
 var num_actions = 2; // JUMP, IDLE, DUCK
 var temporal_window = 1;
-var network_size = num_inputs*temporal_window + num_actions*temporal_window + num_inputs;
+
 
 var layer_defs = [];
-//layer_defs.push({type:'input', out_sx:1, out_sy:1, out_depth:network_size});
-//layer_defs.push({type:'fc', num_neurons: 50, activation:'relu'});
-//layer_defs.push({type:'fc', num_neurons: 50, activation:'relu'});
-//layer_defs.push({type:'regression', num_neurons:num_actions});
 layer_defs.push({type:'input', out_sx:42, out_sy:42, out_depth:1}); // declare size of input
 // output Vol is of size 32x32x3 here
 layer_defs.push({type:'conv', sx:4, filters:4, stride:1, pad:1, activation:'relu'});
@@ -92,30 +82,21 @@ function getObstacleType(obst) {
 function makeStep(idx) {
   var obstacleDetected = false;
 
-  if (!games[idx].started) { // START GAME
+  if (!games[idx].started) { // start
     games[idx].playIntro();
     games[idx].play();
-  } else if (games[idx].activated) { // PLAYING
+  } else if (games[idx].activated) { // playing
     var currentSpeed = games[idx].currentSpeed;
 
-      
-    //var gameStatus = [0, 1, 0, 0, 0];
-    //gameStatus[0] = currentSpeed / games[idx].config.MAX_SPEED;
-
-    // NO OBSTACLES
+    // no obstacles
     if (games[idx].horizon.obstacles.length == 0) {
       obstacleDetected = false;
     }
-    // APPROACHING THE FIRST OBSTACLE
     else {
         
-        var obst = games[idx].horizon.obstacles[0];
+      var obst = games[idx].horizon.obstacles[0];
       var tRex_xPos = games[idx].tRex.xPos;
-/*
-      gameStatus[1] = (obst.xPos - tRex_xPos)/games[idx].dimensions["WIDTH"];
-      var tmpIdx = getObstacleType(games[idx].horizon.obstacles[0]);
-      gameStatus[2+tmpIdx] = 1;
-*/
+        
       if (tRex_xPos < obst.xPos) {
         obstacleDetected = true;
       }
@@ -135,8 +116,7 @@ function makeStep(idx) {
       
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       
-    // FORWARD
-    //var action = brain.forward(gameStatus);
+    // train by image to get action
       var action = brain.forward(convnetjs.img_to_vol(image));
       
       if(!human)
@@ -166,7 +146,7 @@ function makeStep(idx) {
       brain.backward(0.0);
     }
   }
-  // DINO DIED
+  // finish
   else {
     brain.backward(-1.0);
     games[idx].restart();
@@ -175,7 +155,4 @@ function makeStep(idx) {
 
 setInterval(function() {
   makeStep(0);
-  //makeStep(1);
-  //makeStep(2);
-  //makeStep(3);
 }, actionInterval);
