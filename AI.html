@@ -6,7 +6,7 @@
   <link rel="stylesheet" href="css/game.css">
 </head>
 
-<body id="t" class="AI">
+<body id="t" class="offline">
 
   <div id="offline-resources">
     <img id="offline-resources-1x"
@@ -20,24 +20,34 @@
   </div>
 
   <div class="flexc1">
-      <button onclick="loadnet()">Load</button><br/><br/> 
+      <!--<button onclick="loadnet()">Load</button><br/><br/>-->
       <div id="main-frame-error" class="interstitial-wrapper dino0"><div id="main-content"></div></div>
   </div>
     
   
 </body>
 
+<!-- Deep Q Learning -->
+<script src="convnetjs/build/convnet.js"></script>
+<script src="convnetjs/build/util.js"></script>
+<script src="convnetjs/build/vis.js"></script>
+<script src="convnetjs/build/deepqlearn.js"></script>
 <script src="js/game.js"></script>
 <script src="js/player.js"></script>
+
+<!-- Strategies -->
+<script src="js/deepq.js"></script>
 
 <script type="text/javascript">
   setInterval(function (){Runner.instance_.tRex.xPos = 21}, 2000);
 </script>
 
+<!--
 <script type="text/javascript">
   function loadnet() {
     
   }
 </script>
+ -->
 
 </html>

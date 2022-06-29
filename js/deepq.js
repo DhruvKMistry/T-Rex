@@ -31,10 +31,9 @@ function grey(input) {
 }
 
 // Deep Q Learning parameters
-var num_inputs = 42*42*1; // X,Y,grayscale
+var num_inputs =881; // X,Y,grayscale, num_inputs * temporal_window + num_actions * temporal_window + num_inputs
 var num_actions = 2; // JUMP, IDLE, DUCK
 var temporal_window = 1;
-
 
 var layer_defs = [];
 layer_defs.push({type:'input', out_sx:42, out_sy:42, out_depth:1}); // declare size of input
@@ -68,6 +67,21 @@ opt.tdtrainer_options = tdtrainer_options;
 opt.random_action_distribution = [0.1, 0.9];
 
 var brain = new deepqlearn.Brain(num_inputs, num_actions, opt);
+
+if (sessionStorage.getItem("model") != null)
+{
+    console.log('Play by AI');
+    console.log(sessionStorage.getItem("model"));
+    var j = JSON.parse(sessionStorage.getItem("model"));
+    brain.value_net.fromJSON(j);
+    human=false;
+    sessionStorage.removeItem("model");
+}
+else
+{
+    console.log('Play by human');
+    human=true;
+}
 
 function getObstacleType(obst) {
   if (obst.typeConfig.type == "CACTUS_LARGE") {

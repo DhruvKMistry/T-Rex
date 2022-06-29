@@ -5,15 +5,37 @@
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/game.css">
 </head>
-
 <body class="Index">
-
-  <div class="flexc1">
-    <div class="flexi "><h1>T-Rex Dot</h1></div>
-    <div class="flexi"><a class="new_a" href='/T-Rex/human.html'>Play the Game</a></div>
-    <div class="flexi"><a class="new_a disabled" href='/T-Rex/AI.html'>AI GamePlay</a></div>
-  </div>
-
+    
+    <div class="flexc1">
+        <div class="flexi "><h1>T-Rex Dot</h1></div>
+        <div class="flexi"><a class="new_a" href='./human.html'>Play the Game</a></div>
+        <div class="flexi">
+            <label class="new_a">
+                <input type="file" id="selectFiles"></input>
+                AI Play
+            </label>
+        </div>
+    </div>
+    
 </body>
+
+<script type="text/javascript">
+    document.getElementById('selectFiles').addEventListener("change", e => {
+                                                            var importedFile = e.target.files[0];
+                                                            
+                                                            var reader = new FileReader();
+                                                            reader.onload = function() {
+                                                            var fileContent = JSON.parse(reader.result);
+                                                            var formatted = JSON.stringify(fileContent, null, 2);
+                                                            
+                                                            //document.getElementById('result').value = formatted;
+                                                            sessionStorage.setItem("model", formatted);
+                                                            console.log(sessionStorage.getItem("model"));
+                                                            location.href = './AI.html';
+                                                            };
+                                                            reader.readAsText(importedFile);
+                                                          });
+</script>
 
 </html>
